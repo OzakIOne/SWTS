@@ -3,9 +3,9 @@
 ## Installation
 
 ```sh
-git clone ...
+git clone https://github.com/OzakIOne/SWTS.git
 corepack enable # for pnpm
-cd ...
+cd SWTS
 pnpm install
 pnpm dev
 ```
@@ -37,6 +37,7 @@ pnpm dev
 - Utiliser le backend de tanstack start
 - Utiliser la lib de composant headless ark ui
 - Si gestion complexe de state envisager xstate
+- arktype au lieu de zod
 
 ## 🗂️ Modalités
 

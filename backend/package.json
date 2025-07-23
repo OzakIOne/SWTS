@@ -5,6 +5,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/backend/src/index.js",
+    "lint": "oxlint .",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "prettier": "prettier --write 'src/**/*.{ts,tsx}'"
