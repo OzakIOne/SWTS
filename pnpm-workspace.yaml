@@ -1,0 +1,12 @@
+linkWorkspacePackages: true
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@tailwindcss/oxide'
+  - esbuild
+
+
+packages:
+  - 'frontend'
+  - 'backend'
+  - 'shared'
