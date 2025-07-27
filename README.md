@@ -4,10 +4,8 @@
 
 ```sh
 git clone https://github.com/OzakIOne/SWTS.git
-corepack enable # for pnpm
 cd SWTS
-pnpm install
-pnpm dev
+docker compose up -d --build
 ```
 
 ### Stack
