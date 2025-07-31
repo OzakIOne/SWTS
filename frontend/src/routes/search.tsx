@@ -1,4 +1,10 @@
-import { Outlet, createFileRoute, useNavigate, useRouterState } from '@tanstack/react-router';
+import {
+  Outlet,
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouterState,
+} from '@tanstack/react-router';
 import { searchQueryOptions } from '~/utils/swapi';
 import { SearchBar } from '~/components/SearchBar';
 import { ResultCard } from '~/components/ResultCard';
@@ -9,6 +15,15 @@ import { useRef } from 'react';
 
 export const Route = createFileRoute('/search')({
   validateSearch: RouteSearchSchema,
+  beforeLoad: async ({ context }) => {
+    if (!context.user) {
+      throw redirect({ to: '/login' });
+    }
+
+    // `context.queryClient` is also available in our loaders
+    // https://tanstack.com/start/latest/docs/framework/react/examples/start-basic-react-query
+    // https://tanstack.com/router/latest/docs/framework/react/guide/external-data-loading
+  },
   loaderDeps: ({ search: { q } }) => ({ q }),
   loader: async ({ context, deps: { q } }) => {
     if (!q) {
@@ -154,3 +169,4 @@ function SearchComponent() {
     </div>
   );
 }
+

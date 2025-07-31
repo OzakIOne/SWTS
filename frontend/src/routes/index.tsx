@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 export const Route = createFileRoute('/')({
   component: Home,
+  // TODO not needed?
+  loader: ({ context }) => {
+    return { user: context.user };
+  },
 });
 
 function Home() {
@@ -19,3 +23,4 @@ function Home() {
     </div>
   );
 }
+

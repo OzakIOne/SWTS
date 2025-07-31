@@ -1,17 +1,33 @@
 /// <reference types="vite/client" />
-import { HeadContent, Link, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import {
+  HeadContent,
+  Link,
+  Scripts,
+  createRootRouteWithContext,
+  useRouter,
+} from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import * as React from 'react';
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary';
 import { NotFound } from '~/components/NotFound';
 import appCss from '~/styles/app.css?url';
 import { seo } from '~/utils/seo';
-import type { QueryClient } from '@tanstack/react-query';
+import { useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { getUser } from '~/auth/utils';
+import authClient from '~/auth/client';
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
+  user: Awaited<ReturnType<typeof getUser>>;
 }>()({
+  beforeLoad: async ({ context }) => {
+    const user = await context.queryClient.fetchQuery({
+      queryKey: ['user'],
+      queryFn: ({ signal }) => getUser({ signal }),
+    }); // we're using react-query for caching, see router.tsx
+    return { user };
+  },
   head: () => ({
     meta: [
       {
@@ -55,6 +71,10 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const ctx = Route.useRouteContext();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
   return (
     <html>
       <head>
@@ -65,7 +85,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <Link
             to="/"
             activeProps={{
-              className: 'font-bold',
+              className: 'link',
             }}
             activeOptions={{ exact: true }}
           >
@@ -75,11 +95,32 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             to="/search"
             search={{ q: undefined }}
             activeProps={{
-              className: 'font-bold',
+              className: 'link',
             }}
           >
             Search
           </Link>{' '}
+          {ctx.user ? (
+            <button
+              className="btn btn-xs btn-soft btn-error"
+              onClick={async () => {
+                await authClient.signOut();
+                await queryClient.invalidateQueries({ queryKey: ['user'] });
+                await router.invalidate();
+              }}
+            >
+              Sign Out
+            </button>
+          ) : (
+            <>
+              <Link to="/login" className="link">
+                Login
+              </Link>{' '}
+              <Link to="/signup" className="link">
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
         <hr />
         {children}
